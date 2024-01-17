@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Team;
+use App\Events\testWebsocket;
+use App\Events\PrivateWebsocket;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
-use App\Models\Team;
 
 class TeamController extends Controller
 {
@@ -62,5 +64,13 @@ class TeamController extends Controller
     public function destroy(Team $team)
     {
         //
+    }
+
+    public function test(){
+        event (new testWebsocket);
+    }
+
+    public function private(){
+        event (new PrivateWebsocket);
     }
 }
