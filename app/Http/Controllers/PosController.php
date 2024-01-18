@@ -2,9 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Won;
+use App\Models\Pos;
+use App\Events\Lost;
+use App\Models\Team;
+use App\Models\User;
+use App\Events\StartTimer;
+use App\Events\StartPuzzle;
+use Illuminate\Http\Request;
 use App\Http\Requests\StorePosRequest;
 use App\Http\Requests\UpdatePosRequest;
-use App\Models\Pos;
 
 class PosController extends Controller
 {
@@ -37,7 +44,10 @@ class PosController extends Controller
      */
     public function show(Pos $pos)
     {
-        //
+        return view('lo.posdetail',[
+            'pos'=>$pos,
+            'players'=>User::where('role','player')->get()
+        ]);
     }
 
     /**
@@ -62,5 +72,29 @@ class PosController extends Controller
     public function destroy(Pos $pos)
     {
         //
+    }
+
+    public function play(Pos $pos, User $player)
+    {
+        broadcast(new StartPuzzle($pos, $player))->toOthers();
+        return view('lo.puzzle',[
+            'pos'=> $pos,
+            'player'=> $player
+        ]);
+    }
+
+    public function startTimer(Request $request){
+        broadcast(new StartTimer($request->userId))->toOthers();
+        return response()->json(['message' => 'Timer started successfully']);;
+    }
+
+    public function posWon(Request $request){
+        broadcast(new Won($request->userId, $request->pos))->toOthers();
+        return response()->json(['message' => 'Game won successfully']);;
+    }
+
+    public function posLost(Request $request){
+        broadcast(new Lost($request->userId, $request->pos))->toOthers();
+        return response()->json(['message' => 'Game lost successfully']);;
     }
 }
