@@ -1,8 +1,8 @@
 
-@include('player.layouts.header')
+@include('lo.layouts.header')
     <title>@yield('title')</title>
         @yield('script')
 </head>
 <body>
     @yield('content')
-@include('player.layouts.footer')
+@include('lo.layouts.footer')

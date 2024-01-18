@@ -20,3 +20,19 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
 Broadcast::channel('myPrivateChannel.user.{id}', function($user,$id){
 return $user->id == $id;
 });
+
+Broadcast::channel('StartPuzzle.user.{userId}', function ($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
+Broadcast::channel('StartTimer.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
+Broadcast::channel('PosWon.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
+Broadcast::channel('PosLost.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});

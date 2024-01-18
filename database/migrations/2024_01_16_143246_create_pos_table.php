@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pos', function (Blueprint $table) {
             $table->id();
+            $table->string('pos_code');
             $table->timestamps();
             $table->integer('coin_won');
             $table->integer('exp_won');
