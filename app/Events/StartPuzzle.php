@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Models\Pos;
 use App\Models\User;
+use App\Models\Puzzle;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -21,11 +22,11 @@ class StartPuzzle implements ShouldBroadcast
      */
 
      private User $user;
-     public $posId;
-    public function __construct(Pos $pos, User $user)
+     public $puzzleId;
+    public function __construct(Puzzle $puzzle, User $user)
     {
         $this->user = $user;
-        $this->posId =$pos->id;
+        $this->puzzleId =$puzzle->id;
     }
 
     /**

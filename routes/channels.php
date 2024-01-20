@@ -25,6 +25,10 @@ Broadcast::channel('StartPuzzle.user.{userId}', function ($user,$userId){
     return (int) $user->id === (int) $userId;
 });
 
+Broadcast::channel('StartRally.user.{userId}', function ($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
 Broadcast::channel('StartTimer.user.{userId}', function($user,$userId){
     return (int) $user->id === (int) $userId;
 });

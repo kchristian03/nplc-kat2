@@ -28,7 +28,7 @@
     .listen('.start_puzzle', (e) => {
        console.log(e)
 
-       const puzzle_id = e.posId
+       const puzzle_id = e.puzzleId
        if (puzzle_id != null) { // Replace with your validation logic
             window.location.href = "/puzzle/"+puzzle_id;
         } else {
@@ -37,6 +37,23 @@
         }
     })
     }, 200);
+
+    setTimeout(() => {
+    window.Echo.private('StartRally.user.{{ Auth::id() }}')
+    .listen('.start_rally', (e) => {
+       console.log(e)
+
+       const rally_id = e.posId
+       if (rally_id != null) { // Replace with your validation logic
+            window.location.href = "/rally/"+rally_id;
+        } else {
+            // Handle invalid data, e.g., log an error or display a message
+            console.error('Invalid data received:', incomingData);
+        }
+    })
+    }, 200);
+
+
 </script>
 
 @endsection

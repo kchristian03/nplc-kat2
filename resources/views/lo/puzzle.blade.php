@@ -1,6 +1,6 @@
 @extends('lo.layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Puzzle Control'.$puzzle->pos_code)
 
 @section('script')
     <script></script>
@@ -50,12 +50,13 @@
 
         btnWon.addEventListener('click',()=>{
             const userId = '{{ $player->id }}';
-            const pos = '{{ $pos->id }}';
+            const puzzle = '{{ $puzzle->id }}';
             const formData = new FormData();
             formData.append('userId', userId);
-            formData.append('pos',pos);
+            formData.append('puzzle',puzzle);
+            console.log(userId);
             console.log(formData);
-            fetch('/pos-won', {
+            fetch('/puzzle-won', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -71,16 +72,17 @@
                 // Handle errors
                 console.error(error);
             });
+            window.location.href = "/story/"+'{{ $puzzle->id }}';
         });
 
         btnLost.addEventListener('click',()=>{
             const userId = '{{ $player->id }}';
-            const pos = '{{ $pos->id }}';
+            const puzzle = '{{ $puzzle->id }}';
             const formData = new FormData();
             formData.append('userId', userId);
-            formData.append('pos',pos);
+            formData.append('puzzle',puzzle);
             console.log(formData);
-            fetch('/pos-lost', {
+            fetch('/puzzle-lost', {
                 method: 'POST',
                 body: formData,
                 headers: {
@@ -96,6 +98,7 @@
                 // Handle errors
                 console.error(error);
             });
+            window.location.href = "/story/"+'{{ $puzzle->id }}';
         });
 
     </script>

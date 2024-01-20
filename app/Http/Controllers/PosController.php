@@ -7,6 +7,8 @@ use App\Models\Pos;
 use App\Events\Lost;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Result;
+use App\Events\StartRally;
 use App\Events\StartTimer;
 use App\Events\StartPuzzle;
 use Illuminate\Http\Request;
@@ -46,7 +48,7 @@ class PosController extends Controller
     {
         return view('lo.posdetail',[
             'pos'=>$pos,
-            'players'=>User::where('role','player')->get()
+            'teams'=>Team::all()
         ]);
     }
 
@@ -76,25 +78,63 @@ class PosController extends Controller
 
     public function play(Pos $pos, User $player)
     {
-        broadcast(new StartPuzzle($pos, $player))->toOthers();
-        return view('lo.puzzle',[
+        broadcast(new StartRally($pos, $player))->toOthers();
+        return view('lo.rally',[
             'pos'=> $pos,
             'player'=> $player
         ]);
     }
 
-    public function startTimer(Request $request){
-        broadcast(new StartTimer($request->userId))->toOthers();
-        return response()->json(['message' => 'Timer started successfully']);;
-    }
 
     public function posWon(Request $request){
+        $pos = Pos::where('id',$request->pos)->first();
+        $team = Team::where('user_id',$request->userId)->first();
+
+        $newScore = $team->score + $pos->score_won;
+        $newCoin = $team->coin + $pos->coin_won;
+        $newExp = $team->exp + $pos->exp_won;
+
+        $team->update([
+            'score'=> $newScore,
+            'coin'=>$newCoin,
+            'exp'=>$newExp
+        ]);
+
+        Result::create([
+            'coin'=> $pos->coin_won,
+            'exp'=> $pos->exp_won,
+            'score'=> $pos->score_won,
+            'team_id'=> $team->id,
+            'pos_id'=>$pos->id
+        ]);
+
         broadcast(new Won($request->userId, $request->pos))->toOthers();
-        return response()->json(['message' => 'Game won successfully']);;
+        return response()->json(['message' => 'Rally won successful']);
     }
 
     public function posLost(Request $request){
+        $pos = Pos::where('id',$request->pos)->first();
+        $team = Team::where('user_id',$request->userId)->first();
+
+        $newScore = $team->score + $pos->score_lost;
+        $newCoin = $team->coin + $pos->coin_lost;
+        $newExp = $team->exp + $pos->exp_lost;
+
+        $team->update([
+            'score'=> $newScore,
+            'coin'=>$newCoin,
+            'exp'=>$newExp
+        ]);
+
+        Result::create([
+            'coin'=> $pos->coin_lost,
+            'exp'=> $pos->exp_lost,
+            'score'=> $pos->score_lost,
+            'team_id'=> $team->id,
+            'pos_id'=>$pos->id
+        ]);
+
         broadcast(new Lost($request->userId, $request->pos))->toOthers();
-        return response()->json(['message' => 'Game lost successfully']);;
+        return response()->json(['message' => 'Rally lost successful']);
     }
 }

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('school');
             $table->integer('score');
+            $table->string('progress');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

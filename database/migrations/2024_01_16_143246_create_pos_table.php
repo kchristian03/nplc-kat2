@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('pos', function (Blueprint $table) {
             $table->id();
-            $table->string('pos_code');
             $table->timestamps();
             $table->integer('coin_won');
             $table->integer('exp_won');
@@ -21,8 +20,8 @@ return new class extends Migration
             $table->integer('exp_lost');
             $table->integer('score_won');
             $table->integer('score_lost');
-            $table->boolean('forfitable')->default(false);
-            $table->integer('time');
+            $table->string('item_won');
+            $table->integer('item_rate');
         });
     }
 
