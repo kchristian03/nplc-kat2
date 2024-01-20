@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->hasOne(Team::class, 'user_id', 'id');
     }
+
+    public function hasRole($role)
+{
+    return $this->role === $role; // Adjust this according to your roles implementation
+}
 }

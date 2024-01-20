@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Item;
+use App\Models\Team;
+use App\Models\TeamItem;
+use Illuminate\Http\Request;
 use App\Http\Requests\StoreTeamItemRequest;
 use App\Http\Requests\UpdateTeamItemRequest;
-use App\Models\TeamItem;
 
 class TeamItemController extends Controller
 {
@@ -62,5 +65,29 @@ class TeamItemController extends Controller
     public function destroy(TeamItem $teamItem)
     {
         //
+    }
+
+    public function buyItem(Request $request)
+    {
+        $team = Team::find($request->team_id);
+
+        if (!$team) {
+            return response()->json(['error' => 'Team not found'], 404);
+        }
+
+        if($team->coin >= $request->price){
+
+        $newCoinValue = $team->coin - $request->price;
+
+        $team->update(['coin' => $newCoinValue]);
+
+        TeamItem::create([
+            'team_id' => $request->team_id,
+            'item_id' => $request->item_id,
+        ]);
+        return response()->json(['message' => 'Item ' . $request->item_id . ' bought successfully']);
+        }
+        return response()->json(['message' => 'Item ' . $request->item_id . ' cant be bought, not enough coin']);
+
     }
 }

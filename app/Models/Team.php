@@ -15,6 +15,10 @@ class Team extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+        'id'
+    ];
+
     public function item(): BelongsToMany
     {
     return $this->belongsToMany(Item::class, 'team_items', 'team_id', 'item_id');

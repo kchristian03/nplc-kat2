@@ -1,59 +1,52 @@
 @extends('player.layouts.app')
 
-@section('title',"Rally Game")
+@section('title', "Puzzle")
 
 @section('script')
 <script>
-
 </script>
 @endsection
+
 @section('content')
-<div class="countdown-container">
-    <div class="countdown-display">
-      <span id="minutes">{{ $pos->time }}</span>:<span id="seconds">00</span>
-    </div>
-    <button id="start-countdown">Start Countdown</button>
-  </div>
+<h2>Youre Playing Rally Game</h2>
+<button id="btn-inventory" class="btn btn-primary" data-toggle="modal" data-target="#inventoryModal">Inventory</button>
+@include('player.inventory')
 @endsection
+
 @section('footscript')
-  <script>
-  const minutesElement = document.getElementById('minutes');
-  const secondsElement = document.getElementById('seconds');
-  let intervalId;
+@vite('resources/js/app.js')
+<script>
 
-  const validateMinutes = (value) => {
-    if (isNaN(value) || value < 0) {
-      // Handle invalid input (e.g., show error message)
-      return false;
-    }
-    return Math.floor(value);
-  };
+setTimeout(() => {
+    window.Echo.private('PosWon.user.{{ Auth::id() }}')
+    .listen('.pos_won', (e) => {
+       console.log(e)
+       const won = e.won
+       if (won) {
+            window.location.href = "/";
+        } else {
+            // Handle invalid data, e.g., log an error or display a message
+            console.error('Invalid data received:', incomingData);
+        }
+    })
+    }, 200);
 
-  const startCountdownButton = document.getElementById('start-countdown');
-  startCountdownButton.addEventListener('click', () => {
-    const targetMinutes = validateMinutes({{ $pos->time }});
-    if (!targetMinutes || intervalId) {
-      return; // Do nothing if invalid or already running
-    }
+    setTimeout(() => {
+    window.Echo.private('PosLost.user.{{ Auth::id() }}')
+    .listen('.pos_lost', (e) => {
+       console.log(e)
+       const lost = e.lost
+       if (lost) {
+            window.location.href = "/";
+        } else {
+            // Handle invalid data, e.g., log an error or display a message
+            console.error('Invalid data received:', incomingData);
+        }
+    })
+    }, 200);
 
-    const now = new Date();
-    const targetDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + targetMinutes);
 
-    intervalId = setInterval(() => {
-      const difference = targetDate - new Date();
-      const seconds = Math.floor((difference / 1000) % 60);
 
-      minutesElement.textContent = Math.floor(difference / (1000 * 60)).toString().padStart(2, '0');
-      secondsElement.textContent = seconds.toString().padStart(2, '0');
-
-      if (difference <= 0) {
-        clearInterval(intervalId);
-        minutesElement.textContent = '00';
-        secondsElement.textContent = '00';
-        // Add your action here when the countdown is finished
-      }
-    }, 1000);
-  });
-  </script>
+</script>
 @endsection
 

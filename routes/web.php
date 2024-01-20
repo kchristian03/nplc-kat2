@@ -5,6 +5,8 @@ use App\Http\Controllers\LOController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\PlayerController;
+use App\Http\Controllers\PuzzleController;
+use App\Http\Controllers\TeamItemController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,31 +19,37 @@ use App\Http\Controllers\PlayerController;
 |
 */
 
+
+
+// tests
+// Route::view('/trial','websocketTest');
+// Route::view('/intro','player.intro1');
+// Route::get('/test',[TeamController::class,'test']);
+// Route::get('/private',[TeamController::class,'private']);
+
 Route::get('/', function () {
-    return view('player.index');
+    return redirect('/login');
 });
-
-Route::get('/test',[TeamController::class,'test']);
-Route::get('/private',[TeamController::class,'private']);
-
-
-Route::view('/trial','websocketTest');
-
-Route::view('/intro','player.intro1');
-
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::middleware('auth:sanctum')->group(function(){
-    Route::get('/play',[PlayerController::class,'index']);
-    Route::get('/pos',[LOController::class,'index']);
-    Route::get('/pos/{pos}',[PosController::class,'show']);
-    Route::get('/pos/{pos}/{player}',[PosController::class,'play']);
-
-    Route::get('/puzzle/{pos}',[PlayerController::class,'puzzle']);
-
-    Route::post('/start-timer', [PosController::class,'startTimer'])->name('start-timer');
+Route::group(['middleware'=> 'role:lo' ],function(){
+    Route::get('/pos',[LOController::class,'index'])->name('pos');
+    Route::get('/pos/{pos}',[PosController::class,'show'])->name('pos-detail');
+    Route::get('/pos/{pos}/{player}',[PosController::class,'play'])->name('pos-play');
+    Route::post('/start-timer', [PuzzleController::class,'startTimer'])->name('start-timer');
     Route::post('/pos-won', [PosController::class,'posWon'])->name('pos-won');
     Route::post('/pos-lost', [PosController::class,'posLost'])->name('pos-lost');
+    Route::get('/story/{puzzle}',[PuzzleController::class,'show'])->name('puzzle-detail');
+    Route::get('/story/{puzzle}/{player}',[PuzzleController::class,'play'])->name('puzzle-play');
+    Route::post('/puzzle-won', [PuzzleController::class,'puzzleWon'])->name('puzzle-won');
+    Route::post('/puzzle-lost', [PuzzleController::class,'puzzleLost'])->name('puzzle-lost');
 });
+
+Route::group(['middleware'=> 'role:player'],function(){
+    Route::get('/puzzle/{puzzle}',[PlayerController::class,'puzzle']);
+    Route::get('/rally/{pos}',[PlayerController::class,'rally']);
+    Route::get('/play',[PlayerController::class,'index']);
+
+});
+
+Route::post('/buy-item',[TeamItemController::class,'buyItem']);
