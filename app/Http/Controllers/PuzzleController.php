@@ -108,6 +108,8 @@ class PuzzleController extends Controller
             'coin'=>$newCoin
         ]);
 
+        if($puzzle->item)
+
         broadcast(new Won($request->userId, $pos))->toOthers();
         return response()->json(['message' => 'Puzzle won successfully']);
     }
