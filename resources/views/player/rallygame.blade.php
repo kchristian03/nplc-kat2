@@ -1,6 +1,6 @@
 @extends('player.layouts.app')
 
-@section('title', "Puzzle")
+@section('title', "Rally")
 
 @section('script')
 <script>

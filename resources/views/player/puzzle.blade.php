@@ -27,7 +27,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    @include('player.intro1')
+                    @include('player.'.{{ auth()->user()->team->progress }})
                 </div>
             </div>
             {{-- <div class="modal-footer">
