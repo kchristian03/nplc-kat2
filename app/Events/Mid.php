@@ -10,16 +10,22 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class StopTimer
+class Mid implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct()
+
+     private $data;
+     public $result;
+     public $won = true;
+    public function __construct(string $userId, string $pos)
     {
-        //
+        $this->result = $pos;
+        $this->data = $userId;
+        $this->won;
     }
 
     /**
@@ -30,7 +36,11 @@ class StopTimer
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('PosMid.user.'.$this->data),
         ];
+    }
+
+    public function broadcastAs(){
+        return "pos_mid";
     }
 }

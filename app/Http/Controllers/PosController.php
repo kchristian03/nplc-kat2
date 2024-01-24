@@ -152,4 +152,6 @@ class PosController extends Controller
         broadcast(new Lost($request->userId, $request->pos))->toOthers();
         return response()->json(['message' => 'Rally lost successful']);
     }
+
+
 }

@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Mid;
 use App\Events\Won;
 use App\Events\Lost;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Puzzle;
 use App\Events\StartTimer;
+use App\Models\BonusScore;
 use App\Events\StartPuzzle;
 use Illuminate\Http\Request;
+use App\Models\PuzzleCompletion;
 use App\Http\Requests\StorePuzzleRequest;
 use App\Http\Requests\UpdatePuzzleRequest;
 
@@ -84,13 +87,12 @@ class PuzzleController extends Controller
 
         if($player->team->coin >= $puzzle->entry_coin && $player->team->exp >= $puzzle->entry_exp){
 
-            broadcast(new StartPuzzle($puzzle, $player))->toOthers();
+            broadcast(new StartPuzzle($puzzle, $player));
             return view('lo.puzzle',[
                 'puzzle'=> $puzzle,
                 'player'=> $player
             ]);
         }
-
     }
 
     public function puzzleWon(Request $request){
@@ -100,15 +102,29 @@ class PuzzleController extends Controller
         $pos = $request->puzzle;
 
         $newCoin = $team->coin - $puzzle->entry_coin;
-        $newScore = $team->score + $puzzle->score_won;
+
+        $progress_story = $puzzle->pos_code."GOOD";
+
+        PuzzleCompletion::create([
+            'team_id'=> $team->id,
+            'puzzle'=> $puzzle->pos_code
+        ]);
+
+        $puzzlesection = preg_replace("/[^0-9]/", "", $puzzle->pos_code);
+        if (!empty($puzzlesection)) {
+            $code = (int) $puzzlesection;
+            $completions = count(PuzzleCompletion::where('puzzle', 'LIKE', '%' . $code . '%')->get());
+            $bonus = ($completions > 0) ? BonusScore::find($completions) : null;
+        }
+
+        $newScore = $team->score + $puzzle->score_won + (($bonus !== null) ? $bonus->$code : 0);
 
         $team->update([
             'score'=> $newScore,
             'progress'=> $puzzle->code_won,
-            'coin'=>$newCoin
+            'coin'=>$newCoin,
+            'progress_story'=>$progress_story
         ]);
-
-        if($puzzle->item)
 
         broadcast(new Won($request->userId, $pos))->toOthers();
         return response()->json(['message' => 'Puzzle won successfully']);
@@ -121,17 +137,67 @@ class PuzzleController extends Controller
 
         $pos = $request->puzzle;
 
-        $newScore = $team->score + $puzzle->score_lost;
         $newCoin = $team->coin - $puzzle->entry_coin;
+        $progress_story = $puzzle->pos_code."BAD";
+
+        PuzzleCompletion::create([
+            'team_id'=> $team->id,
+            'puzzle'=> $puzzle->pos_code
+        ]);
+
+        $puzzlesection = preg_replace("/[^0-9]/", "", $puzzle->pos_code);
+        if (!empty($puzzlesection)) {
+            $code = (int) $puzzlesection;
+            $completions = count(PuzzleCompletion::where('puzzle', 'LIKE', '%' . $code . '%')->get());
+            $bonus = ($completions > 0) ? BonusScore::find($completions) : null;
+        }
+
+        $newScore = $team->score + $puzzle->score_lost + (($bonus !== null) ? $bonus->$code : 0);
 
         $team->update([
             'score'=> $newScore,
             'progress'=> $puzzle->code_lost,
-            'coin'=>$newCoin
+            'coin'=>$newCoin,
+            'progress_story'=>$progress_story
         ]);
 
         broadcast(new Lost($request->userId, $pos))->toOthers();
         return response()->json(['message' => 'Puzzle lost successfully']);
+    }
+
+    public function puzzleMid(Request $request){
+
+        $puzzle = Puzzle::where('id',$request->puzzle)->first();
+        $team = Team::where('user_id',$request->userId)->first();
+
+        $pos = $request->puzzle;
+
+        $newCoin = $team->coin - $puzzle->entry_coin;
+        $progress_story = $puzzle->pos_code."MID";
+
+        PuzzleCompletion::create([
+            'team_id'=> $team->id,
+            'puzzle'=> $puzzle->pos_code
+        ]);
+
+        $puzzlesection = preg_replace("/[^0-9]/", "", $puzzle->pos_code);
+        if (!empty($puzzlesection)) {
+            $code = (int) $puzzlesection;
+            $completions = count(PuzzleCompletion::where('puzzle', 'LIKE', '%' . $code . '%')->get());
+            $bonus = ($completions > 0) ? BonusScore::find($completions) : null;
+        }
+
+        $newScore = $team->score + $puzzle->score_mid + (($bonus !== null) ? $bonus->$code : 0);
+
+        $team->update([
+            'score'=> $newScore,
+            'progress'=> $puzzle->code_mid,
+            'coin'=>$newCoin,
+            'progress_story'=>$progress_story
+        ]);
+
+        broadcast(new Mid($request->userId, $pos))->toOthers();
+        return response()->json(['message' => 'Puzzle mid successfully']);
     }
 }
 
