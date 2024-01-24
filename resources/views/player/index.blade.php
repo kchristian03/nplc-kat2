@@ -10,7 +10,10 @@
 @section('content')
 
 <div class="container-fluid">
-    <button id="btn-story" class="btn btn-primary" data-toggle="modal" data-target="#puzzle1intro">Story</button>
+    @if(auth()->user()->team->progress != 1)
+    <button id="btn-story" class="btn btn-primary" data-toggle="modal" data-target="#storyModal">Story</button>
+    @endif
+
     <button id="btn-inventory" class="btn btn-primary" data-toggle="modal" data-target="#inventoryModal">Inventory</button>
     <button id="btn-shop" class="btn btn-primary" data-toggle="modal" data-target="#shopModal">Shop</button>
 </div>
@@ -19,6 +22,30 @@
 
 @include('player.inventory')
 @include('player.shop')
+
+<div class="modal fade" id="storyModal" tabindex="-1" role="dialog" aria-labelledby="Story" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Story</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @if(auth()->user()->team->progress != 1)
+                @include('story.'.auth()->user()->team->progress_story)
+                @endif
+            </div>
+        </div>
+        {{-- <div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+<button type="button" class="btn btn-primary">Save changes</button>
+</div> --}}
+    </div>
+</div>
+
+
 
 @section('footscript')
 @vite('resources/js/app.js')
