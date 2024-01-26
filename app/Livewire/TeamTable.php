@@ -10,27 +10,52 @@ use App\Models\Team;
 use App\Models\Result;
 use Livewire\Component;
 use App\Models\TeamItem;
+use Livewire\Attributes\On;
+use App\Models\PlayingRally;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class TeamTable extends Component
 {
 
-    public $playingteams1 = [];
+    // public $playingteams = [];
     public $posId;
 
-    public function mount($playingteams = null, $posId = null){
-        foreach($playingteams as $playingteam){
-            $team = Team::find($playingteam);
-            $this->playingteams1[] = $team;
-        }
-
-        $this->posId = $posId;
-
+    #[On('start-rally')]
+    public function update(Team $team = null, Pos $pos = null){
+        $this->posId = $pos->id;
+        PlayingRally::create([
+            'team_id'=> $team->id,
+            'pos_id'=> $pos->id,
+        ]);
+        // $sessionData = $this->getSessionData();
+        // Log::info('Session Data');
+        // Log::info($sessionData);
+        // Log::info(Session::all());
+        //     $this->playingteams = $sessionData;
+        //     $this->playingteams = array_merge($this->playingteams, [$team]);
+        //     $this->posId = $pos->id;
+        //     $this->putSessionData();
     }
+
+    #[On('refresh-table')]
+    public function refresh($team_id){
+        $playingrally = PlayingRally::where('team_id',$team_id)->first();
+        $playingrally->delete();
+        // Log::info("Saat Refresh");
+        // Log::info($this->playingteams);
+    }
+
+    // protected $listeners = [
+    //     'refreshTeamTable' => 'updateTable'
+    // ];
 
     public function render()
     {
-        return view('livewire.team-table');
+        // $this->playingteams = $this->getSessionData();
+        return view('livewire.team-table',[
+            'playingteams'=> PlayingRally::where('pos_id',$this->posId)->get()
+        ]);
     }
 
     public function wonGame(Team $team)
@@ -41,19 +66,24 @@ class TeamTable extends Component
         $newCoin = $team->coin; // Initialize with the current coin value
         $newExp = $team->exp;   // Initialize with the current exp value
 
-        foreach ($team->itemusage as $itemuse) {
-            if ($itemuse->code == "COIN") {
-                $newCoin += $this->doubleCoin($pos->coin_won, $itemuse->duration);
-            } else if ($itemuse->code == "EXP") {
-                $newExp += $this->doubleExp($pos->exp_won, $itemuse->duration);
-            }
-        }
 
+            foreach ($team->itemusage as $itemuse) {
+                if ($itemuse->code == "COIN") {
+                    $newCoin += $this->doubleCoin($pos->coin_won, $itemuse->duration);
+                } elseif ($itemuse->code == "EXP") {
+                    $newExp += $this->doubleExp($pos->exp_won, $itemuse->duration);
+                }
+            }
+
+
+        Log::info("Team before update:{$team}");
         $team->update([
             'score' => $newScore,
             'coin' => $newCoin,
             'exp' => $newExp
         ]);
+
+        Log::info("Team after update:{$team}");
 
         Result::create([
             'coin' => $pos->coin_won,
@@ -72,16 +102,23 @@ class TeamTable extends Component
                 'item_id' => $item->id
             ]);
         }
-        $current = Session::get('playingteams', []);
-
-        // Use filter to create a new array excluding the team with the given ID
-        $newPlayingTeams = array_filter($current, function ($playingTeam) use ($team) {
-            return $playingTeam->id !== $team->id;
-        });
-
-        Session::put('playingteams', $newPlayingTeams);
 
         broadcast(new Won($team->user->id, $pos->id))->toOthers();
+        // $current = Session::get('playingteams');
+
+        // Log::info($current);
+        // Log::info("Team:{$team}");
+        // Log::info("Pos:{$pos}");
+        // $newPlayingTeams = array_filter($this->playingteams, function ($playingTeam) use ($team) {
+        //     return $playingTeam->id != $team->id;
+        // });
+
+        // Log::info("Setelah Filter");
+        // Log::info($newPlayingTeams);
+        // $this->playingteams = $newPlayingTeams;
+        // $this->putSessionData();
+
+        $this->dispatch('refresh-table', $team->id)->self();
     }
 
     public function lostGame(Team $team)
@@ -96,14 +133,20 @@ class TeamTable extends Component
                 $newCoin = $team->coin + $this->doubleCoin($pos->coin_lost, $itemuse->duration);
             }else if($itemuse->code == "EXP"){
                 $newExp = $team->exp + $this->doubleExp($pos->exp_lost, $itemuse->duration);
+            }else{
+                $newCoin = $team->coin + $pos->coin_lost;
+                $newExp = $team->exp + $pos->exp_lost;
             }
         }
 
+        Log::info("Team before update:{$team}");
         $team->update([
             'score' => $newScore,
             'coin' => $newCoin,
             'exp' => $newExp
         ]);
+
+        Log::info("Team after update:{$team}");
 
         Result::create([
             'coin' => $pos->coin_lost,
@@ -114,14 +157,20 @@ class TeamTable extends Component
         ]);
 
         broadcast(new Lost($team->user->id, $pos->id))->toOthers();
-        $current = Session::get('playingteams', []);
+        // $current = Session::get('playingteams');
 
-        // Use filter to create a new array excluding the team with the given ID
-        $newPlayingTeams = array_filter($current, function ($playingTeam) use ($team) {
-            return $playingTeam->id !== $team->id;
-        });
+        // // Log::info($current);
+        // Log::info("Team:{$team}");
+        // Log::info("Pos:{$pos}");
+        // $newPlayingTeams = array_filter($this->playingteams, function ($playingTeam) use ($team) {
+        //     return $playingTeam->id != $team->id;
+        // });
 
-        Session::put('playingteams', $newPlayingTeams);
+        // Log::info("Setelah Filter");
+        // Log::info($newPlayingTeams);
+        // $this->playingteams = $newPlayingTeams;
+        // $this->putSessionData();
+        $this->dispatch('refresh-table', $team->id)->self();
     }
 
     private function doubleCoin($coin, $duration){
@@ -139,4 +188,28 @@ class TeamTable extends Component
             return $exp;
         }
     }
+
+    // private function getSessionData(){
+    //     $sessionData = Session::get('playingteams');
+    //     if(!empty($sessionData)){
+    //         foreach($sessionData as $sd){
+    //             $data[] = Team::find($sd);
+    //             return $data;
+    //         }
+    //     }else{
+    //         return [];
+    //     }
+    // }
+
+    // private function putSessionData(){
+    //     $sessionData= [];
+    //     Log::info('data when put into session');
+    //     Log::info($this->playingteams);
+    //     foreach($this->playingteams as $d){
+    //         Log::info('singular data get id');
+    //         $sessionData[] = $d->id;
+    //     }
+
+    //     Session::put('playingteams', $sessionData);
+    // }
 }

@@ -3,7 +3,7 @@
 @section('title','Pos '.$pos->id)
 
 @section('script')
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         // Get all buttons with class "dropdown-item"
         var buttons = document.querySelectorAll(".dropdown-item");
@@ -42,7 +42,7 @@
             console.error(error);
         });
     }
-</script>
+</script> --}}
 @endsection
 
 @section('content')
@@ -54,12 +54,12 @@
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
             @foreach ($teams as $team)
-            <button class="dropdown-item" id="play{{ $team->user->id }}">{{ $team->name }}</button>
+            {{-- <button class="dropdown-item" id="play{{ $team->user->id }}">{{ $team->name }}</button> --}}
+            @livewire('StartGame',['pos'=> $pos, 'user'=> $team->user, 'team'=> $team], key($team->id))
             @endforeach
         </div>
       </div>
-{{ Log::info(session()->get('playingteams')) }}
-      @livewire('TeamTable', ['playingteams'=> session()->get('playingteams'), 'posId'=> $pos->id])
+      @livewire('TeamTable', ['posId'=> $pos->id])
 </div>
 @endsection
 

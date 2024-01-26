@@ -10,18 +10,22 @@
             </tr>
         </thead>
         <tbody>
+            {{  Log::info("saat display"); }}
+            {{  Log::info($playingteams); }}
+            @if(!empty($playingteams))
+                @foreach ($playingteams as $playingteam)
+                <tr>
+                    <td>{{ $playingteam->team->id }}</td>
+                    <td>{{ $playingteam->team->name}}</td>
+                    <td>{{ $playingteam->team->coin }}</td>
+                    <td>
+                        <button wire:click="wonGame({{ $playingteam->team }})" class="btn btn-success">Won</button>
+                        <button wire:click="lostGame({{ $playingteam->team }})" class="btn btn-danger">Lost</button>
+                    </td>
+                </tr>
+                @endforeach
+            @endif
 
-            @foreach ($playingteams1 as $playingteam1)
-            <tr>
-                <td>{{ $playingteam1->id }}</td>
-                <td>{{ $playingteam1->name}}</td>
-                <td>{{ $playingteam1->coin }}</td>
-                <td>
-                    <button wire:click="wonGame({{ $playingteam1 }})" class="btn btn-success">Won</button>
-                    <button wire:click="lostGame({{ $playingteam1 }})" class="btn btn-danger">Lost</button>
-                </td>
-            </tr>
-            @endforeach
 
             {{-- @dd($playingteams1) --}}
             <!-- Add more rows as needed -->
