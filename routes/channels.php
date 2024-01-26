@@ -40,3 +40,7 @@ Broadcast::channel('PosWon.user.{userId}', function($user,$userId){
 Broadcast::channel('PosLost.user.{userId}', function($user,$userId){
     return (int) $user->id === (int) $userId;
 });
+
+Broadcast::channel('SpecialItem.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});

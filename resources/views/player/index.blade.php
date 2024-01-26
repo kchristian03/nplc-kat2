@@ -2,26 +2,29 @@
 
 @section('title',"Dashboard")
 
-@section('script')
-<script>
-</script>
-@endsection
-
 @section('content')
 
 <div class="container-fluid">
     @if(auth()->user()->team->progress != 1)
-    <button id="btn-story" class="btn btn-primary" data-toggle="modal" data-target="#storyModal">Story</button>
+    <button id="btn-story" class="btn btn-primary" data-toggle="modal" data-target="#">Story</button>
     @endif
 
     <button id="btn-inventory" class="btn btn-primary" data-toggle="modal" data-target="#inventoryModal">Inventory</button>
     <button id="btn-shop" class="btn btn-primary" data-toggle="modal" data-target="#shopModal">Shop</button>
 </div>
 
+<div id="EXP"></div>
+<div id="COIN"></div>
+
+{{-- <p>now: {{ now() }}</p>
+<p>coin: {{ Session::get("COIN") }}</p>
+<p>exp: {{ Session::get("EXP") }}</p> --}}
+
 {{-- @include('player.stories.puzzle-1.intro.puzzle1intro') --}}
 
 @include('player.inventory')
 @include('player.shop')
+{{ Log::info(session()->all()) }}
 
 <div class="modal fade" id="storyModal" tabindex="-1" role="dialog" aria-labelledby="Story" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -79,6 +82,43 @@
         }
     })
     }, 200);
+
+
+
+    function startCountdown(expirationTime, countdownElementId) {
+        var countdownInterval = setInterval(function () {
+        var nowMillis = new Date().getTime();
+        var targetTime = new Date(expirationTime).getTime();
+
+        var distance = targetTime - nowMillis;
+
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        var currentTimeFormatted = new Date(nowMillis).toLocaleString();
+        var targetTimeFormatted = new Date(targetTime).toLocaleString();
+
+        document.getElementById(countdownElementId).innerHTML = "2x " + countdownElementId + " Bonus: " + minutes + "m " + seconds + "s";
+
+        if (distance <= 0) {
+            clearInterval(countdownInterval);
+            // document.getElementById(countdownElementId).innerHTML = currentTimeFormatted + " target time" + targetTimeFormatted;
+            document.getElementById(countdownElementId).innerHTML = ""
+        }
+    }, 1000);
+    }
+
+    var coinTime = "{{ Session::get('COIN') }}";
+    if(coinTime != ''){
+        startCountdown(coinTime, "COIN");
+    }
+
+
+    var expTime = "{{ Session::get('EXP') }}";
+    if(expTime != ''){
+        startCountdown(expTime, "EXP");
+    }
+
 
 
 </script>

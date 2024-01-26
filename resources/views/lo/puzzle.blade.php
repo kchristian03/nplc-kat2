@@ -3,7 +3,29 @@
 @section('title', 'Puzzle Control'.$puzzle->pos_code)
 
 @section('script')
-    <script></script>
+    <script>
+        function startGame(userId) {
+        const formData = new FormData();
+        formData.append('userId', userId);
+
+        fetch('/pos/'+{{ $pos->id }}, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle successful response
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle errors
+            console.error(error);
+        });
+    }
+    </script>
 @endsection
 
 @section('content')

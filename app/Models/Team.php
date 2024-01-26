@@ -6,7 +6,9 @@ use App\Models\Pos;
 use App\Models\Item;
 use App\Models\User;
 use App\Models\Story;
+use App\Models\ItemUsage;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -42,5 +44,15 @@ class Team extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get all of the itemusage for the Team
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function itemusage(): HasMany
+    {
+        return $this->hasMany(ItemUsage::class);
     }
 }

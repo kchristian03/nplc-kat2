@@ -1,111 +1,41 @@
 <?php
 
-namespace App\Http\Controllers;
-
+namespace App\Livewire;
 
 use App\Events\Won;
 use App\Models\Pos;
 use App\Events\Lost;
 use App\Models\Item;
 use App\Models\Team;
-use App\Models\User;
 use App\Models\Result;
+use Livewire\Component;
 use App\Models\TeamItem;
-use App\Events\StartRally;
-use App\Events\StartTimer;
-use App\Events\StartPuzzle;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Http\Requests\StorePosRequest;
-use App\Http\Requests\UpdatePosRequest;
 use Illuminate\Support\Facades\Session;
 
-class PosController extends Controller
+class TeamTable extends Component
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+
+    public $playingteams1 = [];
+    public $posId;
+
+    public function mount($playingteams = null, $posId = null){
+        foreach($playingteams as $playingteam){
+            $team = Team::find($playingteam);
+            $this->playingteams1[] = $team;
+        }
+
+        $this->posId = $posId;
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function render()
     {
-        //
+        return view('livewire.team-table');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePosRequest $request)
+    public function wonGame(Team $team)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Pos $pos)
-    {
-        return view('lo.posdetail', [
-            'pos' => $pos,
-            'teams' => Team::all()
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Pos $pos)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdatePosRequest $request, Pos $pos)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Pos $pos)
-    {
-        //
-    }
-
-    public function play(Pos $pos, Request $request)
-    {
-        $request->session()->start();
-        $currentArray = session('playingteams', []);
-
-        $newElement = $request->userId;
-        $currentArray[] = $newElement;
-
-        // Step 3: Save the modified array back to the session
-        session()->put('playingteams', $currentArray);
-
-        $player = User::find($request->userId);
-        broadcast(new StartRally($pos, $player))->toOthers();
-        return response()->json(['message' => 'Rally Started ']);
-        // return view('lo.rally', [
-        //     'pos' => $pos,
-        //     'player' => $player
-        // ]);
-    }
-
-
-    public function posWon(Request $request)
-    {
-        $pos = Pos::where('id', $request->pos)->first();
-        $team = Team::where('user_id', $request->userId)->first();
+        $pos = Pos::find($this->posId);
 
         $newScore = $team->score + $pos->score_won;
         $newCoin = $team->coin; // Initialize with the current coin value
@@ -142,15 +72,21 @@ class PosController extends Controller
                 'item_id' => $item->id
             ]);
         }
+        $current = Session::get('playingteams', []);
 
-        broadcast(new Won($request->userId, $request->pos))->toOthers();
-        return response()->json(['message' => 'Rally won successful ' . $random]);
+        // Use filter to create a new array excluding the team with the given ID
+        $newPlayingTeams = array_filter($current, function ($playingTeam) use ($team) {
+            return $playingTeam->id !== $team->id;
+        });
+
+        Session::put('playingteams', $newPlayingTeams);
+
+        broadcast(new Won($team->user->id, $pos->id))->toOthers();
     }
 
-    public function posLost(Request $request)
+    public function lostGame(Team $team)
     {
-        $pos = Pos::where('id', $request->pos)->first();
-        $team = Team::where('user_id', $request->userId)->first();
+        $pos = Pos::find($this->posId);
 
         $newScore = $team->score + $pos->score_lost;
         $newCoin = $team->coin;
@@ -177,8 +113,15 @@ class PosController extends Controller
             'pos_id' => $pos->id
         ]);
 
-        broadcast(new Lost($request->userId, $request->pos))->toOthers();
-        return response()->json(['message' => 'Rally lost successful']);
+        broadcast(new Lost($team->user->id, $pos->id))->toOthers();
+        $current = Session::get('playingteams', []);
+
+        // Use filter to create a new array excluding the team with the given ID
+        $newPlayingTeams = array_filter($current, function ($playingTeam) use ($team) {
+            return $playingTeam->id !== $team->id;
+        });
+
+        Session::put('playingteams', $newPlayingTeams);
     }
 
     private function doubleCoin($coin, $duration){
@@ -196,6 +139,4 @@ class PosController extends Controller
             return $exp;
         }
     }
-
-
 }

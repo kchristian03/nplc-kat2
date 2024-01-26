@@ -35,7 +35,7 @@ Auth::routes();
 Route::group(['middleware'=> 'role:lo' ],function(){
     Route::get('/pos',[LOController::class,'index'])->name('pos');
     Route::get('/pos/{pos}',[PosController::class,'show'])->name('pos-detail');
-    Route::get('/pos/{pos}/{player}',[PosController::class,'play'])->name('pos-play');
+    Route::post('/pos/{pos}',[PosController::class,'play'])->name('pos-play');
     Route::post('/start-timer', [PuzzleController::class,'startTimer'])->name('start-timer');
     Route::post('/pos-won', [PosController::class,'posWon'])->name('pos-won');
     Route::post('/pos-lost', [PosController::class,'posLost'])->name('pos-lost');

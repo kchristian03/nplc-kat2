@@ -3,7 +3,9 @@
 @section('title', 'Puzzle ' . $puzzle->pos_code)
 
 @section('script')
-    <script></script>
+    <script>
+
+    </script>
 @endsection
 
 @section('content')
@@ -19,11 +21,12 @@
                     @if ($team->exp < $puzzle->entry_exp || $team->coin < $puzzle->entry_coin)
                         <span class="dropdown-item disabled">{{ $team->name }} Dont Have Enough EXP or COIN</span>
                     @else
-                        <a class="dropdown-item"
-                            href="/story/{{ $puzzle->id }}/{{ $team->user->id }}">{{ $team->name }}</a>
+                        <button class="dropdown-item" id="play{{ $team->user->id }}">{{ $team->name }}</button>
                     @endif
                 @endforeach
             </div>
         </div>
+
+        @livewire('TeamTable', ['playingteams'=>session()->get('playingteams')])
     </div>
 @endsection
