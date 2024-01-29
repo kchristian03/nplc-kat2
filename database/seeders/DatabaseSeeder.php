@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             ItemSeeder::class,
             TeamSeeder::class,
             PuzzleSeeder::class,
-            BonusPointSeeder::class
+            BonusPointSeeder::class,
+            ItemUsageSeeder::class
         ]);
 
     }

@@ -40,3 +40,23 @@ Broadcast::channel('PosWon.user.{userId}', function($user,$userId){
 Broadcast::channel('PosLost.user.{userId}', function($user,$userId){
     return (int) $user->id === (int) $userId;
 });
+
+Broadcast::channel('PosMid.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
+Broadcast::channel('Forfit.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
+Broadcast::channel('SpecialItem.user.{userId}', function($user,$userId){
+    return (int) $user->id === (int) $userId;
+});
+
+Broadcast::channel('globaltimer', function () {
+    return true;
+});
+
+Broadcast::channel('globaltimerstop', function () {
+    return true;
+});

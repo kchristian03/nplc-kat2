@@ -20,12 +20,12 @@ class Mid implements ShouldBroadcast
 
      private $data;
      public $result;
-     public $won = true;
+     public $mid = true;
     public function __construct(string $userId, string $pos)
     {
         $this->result = $pos;
         $this->data = $userId;
-        $this->won;
+        $this->mid;
     }
 
     /**

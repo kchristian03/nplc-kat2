@@ -11,6 +11,7 @@ use App\Models\Puzzle;
 use App\Events\StartTimer;
 use App\Models\BonusScore;
 use App\Events\StartPuzzle;
+use App\Models\GlobalTimer;
 use Illuminate\Http\Request;
 use App\Models\PuzzleCompletion;
 use App\Http\Requests\StorePuzzleRequest;
@@ -49,7 +50,8 @@ class PuzzleController extends Controller
     {
         return view('lo.puzzledetail',[
             'puzzle'=>$puzzle,
-            'teams'=>Team::where('progress',$puzzle->pos_code)->get()
+            'teams'=>Team::where('progress',$puzzle->pos_code)->get(),
+            "gameDuration"=> GlobalTimer::orderBy('id','DESC')->first()
         ]);
     }
 

@@ -30,19 +30,28 @@
                     @include('story.'.auth()->user()->team->progress)
                 </div>
             </div>
-            {{-- <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-  <button type="button" class="btn btn-primary">Save changes</button>
-</div> --}}
         </div>
     </div>
 
 
-    @include('player.inventory')
+    <div class="modal fade" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="Inventory" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Inventory</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @livewire('InventoryModal')
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('footscript')
-    @vite('resources/js/app.js')
     <script>
         setTimeout(() => {
             window.Echo.private('PosWon.user.{{ Auth::id() }}')
@@ -64,6 +73,34 @@
                     console.log(e)
                     const lost = e.lost
                     if (lost) {
+                        window.location.href = "/";
+                    } else {
+                        // Handle invalid data, e.g., log an error or display a message
+                        console.error('Invalid data received:', incomingData);
+                    }
+                })
+        }, 200);
+
+        setTimeout(() => {
+            window.Echo.private('PosMid.user.{{ Auth::id() }}')
+                .listen('.pos_mid', (e) => {
+                    console.log(e)
+                    const mid = e.mid
+                    if (mid) {
+                        window.location.href = "/";
+                    } else {
+                        // Handle invalid data, e.g., log an error or display a message
+                        console.error('Invalid data received:', incomingData);
+                    }
+                })
+        }, 200);
+
+        setTimeout(() => {
+            window.Echo.private('Forfit.user.{{ Auth::id() }}')
+                .listen('.forfit', (e) => {
+                    console.log(e)
+                    const forfit = e.forfit
+                    if (forfit) {
                         window.location.href = "/";
                     } else {
                         // Handle invalid data, e.g., log an error or display a message

@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('item_usages', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('item_id');
-            $table->timestamp('duration');
+            $table->unsignedBigInteger('team_id');
+            $table->foreign('team_id')->references('id')->on('teams')->onDelete('cascade');
+            $table->string('code');
+            $table->string('duration');
+
         });
     }
 

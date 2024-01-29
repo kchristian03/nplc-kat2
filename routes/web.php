@@ -30,12 +30,13 @@ use App\Http\Controllers\TeamItemController;
 Route::get('/', function () {
     return redirect('/login');
 });
+
 Auth::routes();
 
 Route::group(['middleware'=> 'role:lo' ],function(){
     Route::get('/pos',[LOController::class,'index'])->name('pos');
     Route::get('/pos/{pos}',[PosController::class,'show'])->name('pos-detail');
-    Route::get('/pos/{pos}/{player}',[PosController::class,'play'])->name('pos-play');
+    Route::post('/pos/{pos}',[PosController::class,'play'])->name('pos-play');
     Route::post('/start-timer', [PuzzleController::class,'startTimer'])->name('start-timer');
     Route::post('/pos-won', [PosController::class,'posWon'])->name('pos-won');
     Route::post('/pos-lost', [PosController::class,'posLost'])->name('pos-lost');
@@ -43,6 +44,12 @@ Route::group(['middleware'=> 'role:lo' ],function(){
     Route::get('/story/{puzzle}/{player}',[PuzzleController::class,'play'])->name('puzzle-play');
     Route::post('/puzzle-won', [PuzzleController::class,'puzzleWon'])->name('puzzle-won');
     Route::post('/puzzle-lost', [PuzzleController::class,'puzzleLost'])->name('puzzle-lost');
+    Route::get('/gamestart',[LOController::class,'globalTimer']);
+    Route::get('/gamestop',[LOController::class,'globalTimerStop']);
+});
+
+Route::group(['middleware'=> 'role:admin' ],function(){
+
 });
 
 Route::group(['middleware'=> 'role:player'],function(){

@@ -6,7 +6,12 @@ use App\Models\Pos;
 use App\Models\Item;
 use App\Models\User;
 use App\Models\Story;
+use App\Models\ItemUsage;
+use App\Models\PlayingRally;
+use App\Models\PlayingPuzzle;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -34,13 +39,23 @@ class Team extends Model
     return $this->belongsToMany(Pos::class, 'results', 'team_id', 'pos_id');
     }
 
-    /**
-     * Get the user that owns the Team
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function itemusage(): HasMany
+    {
+        return $this->hasMany(ItemUsage::class);
+    }
+
+    public function playingPuzzle(): HasOne
+    {
+        return $this->hasOne(PlayingPuzzle::class);
+    }
+
+    public function playingRally(): HasOne
+    {
+        return $this->hasOne(PlayingRally::class);
     }
 }

@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -37,6 +40,22 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    protected function attemptLogin(Request $request)
+{
+    $credentials = $this->credentials($request);
+
+    if ($this->guard()->attempt($credentials, $request->filled('remember'))) {
+
+        Session::put('COIN', "");
+        Session::put('EXP', "");
+        session::put('playingteams', []);
+
+        return true;
+    }
+
+    return false;
+}
 
 
     // protected function authenticated(Request $request, $user)

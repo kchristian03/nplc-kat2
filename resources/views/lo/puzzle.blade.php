@@ -3,7 +3,8 @@
 @section('title', 'Puzzle Control'.$puzzle->pos_code)
 
 @section('script')
-    <script></script>
+    <script>
+    </script>
 @endsection
 
 @section('content')
