@@ -7,6 +7,8 @@ use App\Models\Team;
 use App\Models\User;
 use Livewire\Component;
 use App\Events\StartRally;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\Log;
 
 class StartGame extends Component
 {
@@ -14,10 +16,12 @@ class StartGame extends Component
     public User $user;
     public Pos $pos;
     public Team $team;
+
     public function render()
     {
         return view('livewire.start-game');
     }
+
 
     public function start_game(){
 

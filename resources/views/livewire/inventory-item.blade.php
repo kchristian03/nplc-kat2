@@ -5,7 +5,6 @@
         <div class="card-body">
             <h5 class="card-title">{{ $item->name }} - {{ $item->price }}</h5>
             <p class="card-text">{{ $item->description }}</p>
-            <p>Item ID {{ $item->id }}</p>
             @livewire('use_item', ['team_id' => auth()->user()->team->id, 'item_id' => $item->id])
         </div>
     </div>

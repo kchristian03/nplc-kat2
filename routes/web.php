@@ -30,6 +30,7 @@ use App\Http\Controllers\TeamItemController;
 Route::get('/', function () {
     return redirect('/login');
 });
+
 Auth::routes();
 
 Route::group(['middleware'=> 'role:lo' ],function(){
@@ -43,6 +44,12 @@ Route::group(['middleware'=> 'role:lo' ],function(){
     Route::get('/story/{puzzle}/{player}',[PuzzleController::class,'play'])->name('puzzle-play');
     Route::post('/puzzle-won', [PuzzleController::class,'puzzleWon'])->name('puzzle-won');
     Route::post('/puzzle-lost', [PuzzleController::class,'puzzleLost'])->name('puzzle-lost');
+    Route::get('/gamestart',[LOController::class,'globalTimer']);
+    Route::get('/gamestop',[LOController::class,'globalTimerStop']);
+});
+
+Route::group(['middleware'=> 'role:admin' ],function(){
+
 });
 
 Route::group(['middleware'=> 'role:player'],function(){

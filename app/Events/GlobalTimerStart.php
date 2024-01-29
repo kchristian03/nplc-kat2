@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Mid implements ShouldBroadcast
+class GlobalTimerStart implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -18,14 +18,10 @@ class Mid implements ShouldBroadcast
      * Create a new event instance.
      */
 
-     private $data;
-     public $result;
-     public $mid = true;
-    public function __construct(string $userId, string $pos)
+    public $message;
+    public function __construct()
     {
-        $this->result = $pos;
-        $this->data = $userId;
-        $this->mid;
+        $this->message = "GameStart";
     }
 
     /**
@@ -36,11 +32,11 @@ class Mid implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('PosMid.user.'.$this->data),
+            new Channel('globaltimer'),
         ];
     }
 
     public function broadcastAs(){
-        return "pos_mid";
+        return "global-timer";
     }
 }

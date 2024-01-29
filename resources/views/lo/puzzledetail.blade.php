@@ -5,50 +5,64 @@
 @section('script')
     <script>
         function startCountdown(expirationTime, countdownElementId) {
-        var countdownInterval = setInterval(function () {
-        var nowMillis = new Date().getTime();
-        var targetTime = new Date(expirationTime).getTime();
+            var countdownInterval = setInterval(function() {
+                var nowMillis = new Date().getTime();
+                var targetTime = new Date(expirationTime).getTime();
 
-        var distance = targetTime - nowMillis;
+                var distance = targetTime - nowMillis;
 
-        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        var currentTimeFormatted = new Date(nowMillis).toLocaleString();
-        var targetTimeFormatted = new Date(targetTime).toLocaleString();
+                // Format minutes and seconds to always display two digits
+                var minutesFormatted = ('0' + minutes).slice(-2);
+                var secondsFormatted = ('0' + seconds).slice(-2);
 
-        document.getElementById(countdownElementId).innerHTML =minutes + ":" + seconds;
+                document.getElementById(countdownElementId).innerHTML = minutesFormatted + ":" + secondsFormatted;
 
-        if (distance <= 0) {
-            clearInterval(countdownInterval);
-            // document.getElementById(countdownElementId).innerHTML = currentTimeFormatted + " target time" + targetTimeFormatted;
-            document.getElementById(countdownElementId).innerHTML = ""
+                if (distance <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById(countdownElementId).innerHTML = "Finished";
+                }
+            }, 1000);
         }
-    }, 1000);
-    }
+
+
+        setTimeout(() => {
+            window.Echo.channel('globaltimerstop')
+                .listen('.global-timer-stop', (event) => {
+                    console.log(event);
+                    const message = event.message;
+
+                    // Check the message content and take appropriate actions
+                    if (message === 'GameStop') {
+                        window.location.href = "/";
+                    } else {
+                        // Handle other cases if needed
+                        console.log('Received message:', message);
+                    }
+                });
+        }, 200);
     </script>
 @endsection
 
+
 @section('content')
-    <div class="container-fluid">
-        <h1>Team List</h1>
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                Teams
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                @foreach ($teams as $team)
-                    @if ($team->exp < $puzzle->entry_exp || $team->coin < $puzzle->entry_coin)
-                        <span class="dropdown-item disabled">{{ $team->name }} Dont Have Enough EXP or COIN</span>
-                    @else
-                    @livewire('StartPuzzle',['puzzle'=> $puzzle, 'user'=> $team->user, 'team'=> $team], key($team->id))
-                    @endif
-                @endforeach
+
+    @if (!empty($gameDuration) && $gameDuration->game_duration <= now())
+        <h1>Game Ends</h1>
+    @else
+        <div class="container-fluid">
+            <h1>Team List</h1>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    Teams
+                </button>
+                @livewire('SelectTeamPuzzle', ['pos_code' => $puzzle->pos_code, 'puzzle' => $puzzle])
             </div>
+
+            @livewire('PuzzleTable', ['puzzleId' => $puzzle->id])
         </div>
-
-        @livewire('PuzzleTable', ['puzzleId'=> $puzzle->id])
-    </div>
+    @endif
 @endsection
-

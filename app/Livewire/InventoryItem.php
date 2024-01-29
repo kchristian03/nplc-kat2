@@ -2,15 +2,17 @@
 
 namespace App\Livewire;
 
+use App\Models\Item;
 use Livewire\Component;
+use App\Models\TeamItem;
 
 class InventoryItem extends Component
 {
-    public $item;
+    public Item $item;
 
 
-    public function mount($item = null){
-        $this->item = $item;
+    public function mount(TeamItem $teamItem = null){
+        $this->item = Item::find($teamItem->item_id);
     }
 
     public function render()

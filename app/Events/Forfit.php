@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Mid implements ShouldBroadcast
+class Forfit implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,12 +20,13 @@ class Mid implements ShouldBroadcast
 
      private $data;
      public $result;
-     public $mid = true;
+     public $forfit = true;
+
     public function __construct(string $userId, string $pos)
     {
-        $this->result = $pos;
         $this->data = $userId;
-        $this->mid;
+        $this->result = $pos;
+        $this->forfit;
     }
 
     /**
@@ -36,11 +37,11 @@ class Mid implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('PosMid.user.'.$this->data),
+            new PrivateChannel('Forfit.user.'.$this->data),
         ];
     }
 
     public function broadcastAs(){
-        return "pos_mid";
+        return "forfit";
     }
 }

@@ -1,5 +1,5 @@
 <div class="row">
-    @foreach ($items as $item)
-    <livewire:inventory-item :$item :key="$item->id">
+    @foreach ($items as $teamItem)
+    @livewire('inventory-item', ['teamItem' => $teamItem], key($teamItem->id))
     @endforeach
 </div>

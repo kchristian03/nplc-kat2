@@ -6,6 +6,7 @@ use App\Events\Mid;
 use App\Events\Won;
 use App\Events\Lost;
 use App\Models\Team;
+use App\Events\Forfit;
 use App\Models\Puzzle;
 use Livewire\Component;
 use App\Events\StartTimer;
@@ -32,13 +33,8 @@ class PuzzleTable extends Component
     public function refresh($team_id){
         $playingpuzzle = PlayingPuzzle::where('team_id',$team_id)->first();
         $playingpuzzle->delete();
-        // Log::info("Saat Refresh");
-        // Log::info($this->playingteams);
     }
 
-    // protected $listeners = [
-    //     'refreshTeamTable' => 'updateTable'
-    // ];
 
     #[On('start-timer')]
     public function render()
@@ -52,13 +48,14 @@ class PuzzleTable extends Component
     public function startPuzzle(Team $team)
     {
         $puzzle = Puzzle::where('id',$this->puzzleId)->first();
+
         $playingpuzzle = PlayingPuzzle::where('team_id',$team->id)->first();
         $playingpuzzle->update([
             'duration'=> now()->addMinutes($puzzle->time)
         ]);
 
         broadcast(new StartTimer($team->user->id))->toOthers();
-        $this->dispatch('start-timer')->self();
+        $this->dispatch('start-timer');
     }
 
     public function lostPuzzle(Team $team)
@@ -67,7 +64,6 @@ class PuzzleTable extends Component
 
         $pos = $puzzle->id;
 
-        $newCoin = $team->coin - $puzzle->entry_coin;
         $progress_story = $puzzle->pos_code."BAD";
 
         PuzzleCompletion::create([
@@ -87,13 +83,12 @@ class PuzzleTable extends Component
         $team->update([
             'score'=> $newScore,
             'progress'=> $puzzle->code_lost,
-            'coin'=>$newCoin,
             'progress_story'=>$progress_story
         ]);
 
         broadcast(new Lost($team->user->id, $pos))->toOthers();
 
-        $this->dispatch('refresh-table', $team->id)->self();
+        $this->dispatch('refresh-table', $team->id);
     }
 
     public function wonPuzzle(Team $team)
@@ -102,7 +97,6 @@ class PuzzleTable extends Component
 
         $pos = $this->puzzleId;
 
-        $newCoin = $team->coin - $puzzle->entry_coin;
 
         $progress_story = $puzzle->pos_code."GOOD";
 
@@ -123,20 +117,18 @@ class PuzzleTable extends Component
         $team->update([
             'score'=> $newScore,
             'progress'=> $puzzle->code_won,
-            'coin'=>$newCoin,
             'progress_story'=>$progress_story
         ]);
 
         broadcast(new Won($team->user_id, $pos))->toOthers();
-        $this->dispatch('refresh-table', $team->id)->self();
+        $this->dispatch('refresh-table', $team->id);
     }
 
-    public function puzzleMid(Team $team_id){
+    public function puzzleMid(Team $team){
         $puzzle = Puzzle::where('id',$this->puzzleId)->first();
 
         $pos = $puzzle->id;
 
-        $newCoin = $team->coin - $puzzle->entry_coin;
         $progress_story = $puzzle->pos_code."MID";
 
         PuzzleCompletion::create([
@@ -156,11 +148,19 @@ class PuzzleTable extends Component
         $team->update([
             'score'=> $newScore,
             'progress'=> $puzzle->code_mid,
-            'coin'=>$newCoin,
             'progress_story'=>$progress_story
         ]);
 
         broadcast(new Mid($team->user_id, $pos))->toOthers();
-        $this->dispatch('refresh-table', $team->id)->self();
+        $this->dispatch('refresh-table', $team->id);
+    }
+
+    public function forfit(Team $team){
+        $puzzle = Puzzle::where('id',$this->puzzleId)->first();
+
+        $pos = $puzzle->id;
+
+        broadcast(new Forfit($team->user_id, $pos))->toOthers();
+        $this->dispatch('refresh-table', $team->id);
     }
 }

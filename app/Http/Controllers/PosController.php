@@ -14,6 +14,7 @@ use App\Models\TeamItem;
 use App\Events\StartRally;
 use App\Events\StartTimer;
 use App\Events\StartPuzzle;
+use App\Models\GlobalTimer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\StorePosRequest;
@@ -53,7 +54,8 @@ class PosController extends Controller
     {
         return view('lo.posdetail', [
             'pos' => $pos,
-            'teams' => Team::all()
+            'teams' => Team::all(),
+            "gameDuration"=> GlobalTimer::orderBy('id','DESC')->first()
         ]);
     }
 

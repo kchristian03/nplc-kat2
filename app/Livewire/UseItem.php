@@ -60,5 +60,7 @@ class UseItem extends Component
         }
 
         Log::info("Exiting the loop");
+
+        $this->dispatch('item-used');
     }
 }

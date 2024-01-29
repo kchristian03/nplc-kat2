@@ -2,9 +2,7 @@
 
 @section('title', 'Pos')
 
-@section('script')
-    <script></script>
-@endsection
+@section('content')
 <div class="container-fluid">
     <h1>Pos List</h1>
     <div class="dropdown">
@@ -31,7 +29,8 @@
             @endforeach
         </div>
     </div>
-</div>
-@section('content')
 
+    <a class="btn btn-primary" href="/gamestart">Game Start</a>
+    <a class="btn btn-danger" href="/gamestop">Game Stop</a>
+</div>
 @endsection

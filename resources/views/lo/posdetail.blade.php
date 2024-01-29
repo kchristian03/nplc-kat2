@@ -2,65 +2,42 @@
 
 @section('title','Pos '.$pos->id)
 
+
 @section('script')
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Get all buttons with class "dropdown-item"
-        var buttons = document.querySelectorAll(".dropdown-item");
+<script>
+    setTimeout(() => {
+    window.Echo.channel('globaltimerstop')
+        .listen('.global-timer-stop', (event) => {
+            console.log(event);
+            const message = event.message;
 
-        // Add a click event listener to each button
-        buttons.forEach(function(button) {
-            button.addEventListener("click", function() {
-                // Extract user ID from the button ID (assuming the ID is in the format "play{userId}")
-                var userId = button.id.replace("play", "");
-
-                // Call the startGame function with the extracted user ID
-                startGame(userId);
-            });
+            // Check the message content and take appropriate actions
+            if (message === 'GameStop') {
+                window.location.href = "/";
+            } else {
+                // Handle other cases if needed
+                console.log('Received message:', message);
+            }
         });
-    });
-
-    // Your existing startGame function
-    function startGame(userId) {
-        const formData = new FormData();
-        formData.append('userId', userId);
-
-        fetch('/pos/{{ $pos->id }}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Handle successful response
-            console.log(data);
-        })
-        .catch(error => {
-            // Handle errors
-            console.error(error);
-        });
-    }
-</script> --}}
+}, 200);
+</script>
 @endsection
-
 @section('content')
+
+@if(!empty($gameDuration) && $gameDuration->game_duration<=now())
+<h1>Game Ends</h1>
+@else
 <div class="container-fluid">
     <h1>Team List</h1>
     <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Teams
         </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            @foreach ($teams as $team)
-            {{-- <button class="dropdown-item" id="play{{ $team->user->id }}">{{ $team->name }}</button> --}}
-            @livewire('StartGame',['pos'=> $pos, 'user'=> $team->user, 'team'=> $team], key($team->id))
-            @endforeach
-        </div>
+        @livewire('SelectTeamRally', ['pos'=> $pos])
       </div>
       @livewire('TeamTable', ['posId'=> $pos->id])
 </div>
+@endif
 @endsection
 
 

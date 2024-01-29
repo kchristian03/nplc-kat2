@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Item;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TeamItem extends Model
 {
@@ -14,4 +16,14 @@ class TeamItem extends Model
         'team_id',
         'item_id'
     ];
+
+    /**
+     * Get the item associated with the TeamItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function item(): HasOne
+    {
+        return $this->hasOne(Item::class);
+    }
 }

@@ -34,5 +34,7 @@ class Buy extends Component
                     'item_id' => $item->id,
                 ]);
             }
+
+            $this->dispatch('item-bought');
     }
 }
