@@ -1,5 +1,5 @@
 <div>
     <button wire:click="start" class="btn btn-danger"
-    {{ $globaltimer ? '' : 'disabled' }}
+    {{ $globaltimer ? 'disabled' : '' }}
     >Start Game</button>
 </div>

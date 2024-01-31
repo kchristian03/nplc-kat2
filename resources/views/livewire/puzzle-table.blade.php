@@ -1,5 +1,5 @@
-
 <div class="container mt-5">
+
     <h2>Team Information</h2>
     <table class="table">
         <thead>
@@ -15,7 +15,7 @@
             {{ Log::info($playingteams) }}
             @if (!empty($playingteams))
                 @foreach ($playingteams as $playingteam)
-                {{ Log::info("Playing team: ".$playingteam); }}
+                    {{ Log::info('Playing team: ' . $playingteam) }}
                     <tr>
                         <td>{{ $playingteam->team->id }}</td>
                         <td>{{ $playingteam->team->name }}</td>
@@ -33,16 +33,15 @@
                                 {{ $playingteam->duration == null ? '' : 'disabled' }}
                                 class="btn btn-primary">Start</button>
 
-                                <script>
-
-                                    setTimeout(() => {
-                                        var teamId = "{{ $playingteam->team->id }}"
+                            <script>
+                                setTimeout(() => {
+                                    var teamId = "{{ $playingteam->team->id }}"
                                     var time{{ $playingteam->team->id }} = "{{ $playingteam->duration }}";
                                     if (time{{ $playingteam->team->id }} != "") {
                                         startCountdown(time{{ $playingteam->team->id }}, "timer" + teamId);
                                     }
-                                    }, 200);
-                                </script>
+                                }, 200);
+                            </script>
                             <button wire:click="wonPuzzle({{ $playingteam->team }})"
                                 id="wonbtn{{ $playingteam->team->id }}"
                                 {{ $playingteam->duration == null ? 'disabled' : '' }}
@@ -67,8 +66,20 @@
                             @endif
                         </td>
                     </tr>
+
+                    <script>
+                        setTimeout(() => {
+                            window.Echo.private('SpecialItem.user.{{ $playingteam->team->user_id }}')
+                                .listen('.special-item', (event) => {
+                                    console.log('Special Item Received:', event.message);
+                                    createAlert(event.message);
+                                });
+                        }, 200);
+                    </script>
                 @endforeach
             @endif
         </tbody>
     </table>
+
+
 </div>

@@ -20,7 +20,7 @@ class StartGlobalTimer extends Component
 
     public function start(){
         GlobalTimer::create([
-            'game_duration'=>now()->addMinutes(20)
+            'game_duration'=>now()->addMinutes(250)
         ]);
 
         $this->dispatch('start');
