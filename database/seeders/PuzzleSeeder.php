@@ -68,7 +68,7 @@ class PuzzleSeeder extends Seeder
                 'entry_exp' => 100,
                 'forfitable' => false,
                 'max_team' => 4,
-                'time' => 10,
+                'time' => 15,
             ],
             [
                 'pos_code' => '3B',
@@ -78,10 +78,10 @@ class PuzzleSeeder extends Seeder
                 'code_won' => '4A',
                 'code_lost' => '5',
                 'code_mid' => '4B',
-                'entry_coin' => 300,
-                'entry_exp' => 75,
+                'entry_coin' => 75,
+                'entry_exp' => 300,
                 'forfitable' => false,
-                'max_team' => 6,
+                'max_team' =>10,
                 'time' => 10,
             ],
             [
@@ -95,7 +95,7 @@ class PuzzleSeeder extends Seeder
                 'entry_coin' => 75,
                 'entry_exp' => 300,
                 'forfitable' => true,
-                'max_team' => 6,
+                'max_team' => 10,
                 'time' => 15,
             ],
             [
