@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -25,6 +26,9 @@ class SpecialItem implements ShouldBroadcast
     {
         $this->user = $user;
         $this->message = $message;
+
+        Log::info("user di special item");
+        Log::info($this->user);
     }
 
     /**

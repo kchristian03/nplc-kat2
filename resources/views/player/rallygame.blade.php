@@ -8,23 +8,21 @@
 @endsection
 
 @section('content')
-<h2>Youre Playing Rally Game</h2>
-<button id="btn-inventory" class="btn btn-primary" data-toggle="modal" data-target="#inventoryModal">Inventory</button>
-<div class="modal fade" id="inventoryModal" tabindex="-1" role="dialog" aria-labelledby="Inventory" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">Inventory</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                @livewire('InventoryModal')
+<div class="bg-cover bg-fixed h-screen w-screen" style="background-image: url('{{ asset('images/nplcbg.png') }}')">
+    <div class="bg-cover bg-bottom bg-fixed bg-no-repeat h-screen w-screen "
+        style="background-image: url('{{ asset('images/bottommoon.png') }}')">
+        <div class="backdrop-blur-[1px] h-screen w-screen bg-white/20">
+            <div class="h-screen w-screen flex flex-col gap-6 justify-center items-center">
+                <div class="card p-2 bg-gradient-to-br from-gray-600 to-gray-500 rounded drop-shadow-md">
+                    <div class="card p-5 bg-sky-500/90 rounded drop-shadow-md">
+                        <h1 class="font-sans font-bold text-4xl text-slate-100 text-center drop-shadow-md">Rally Game</h1>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 @endsection
 
 @section('footscript')

@@ -49,8 +49,8 @@ Broadcast::channel('Forfit.user.{userId}', function($user,$userId){
     return (int) $user->id === (int) $userId;
 });
 
-Broadcast::channel('SpecialItem.user.{userId}', function($user,$userId){
-    return (int) $user->id === (int) $userId;
+Broadcast::channel('SpecialItem.user.{userId}', function ($user, $userId) {
+    return true;
 });
 
 Broadcast::channel('globaltimer', function () {

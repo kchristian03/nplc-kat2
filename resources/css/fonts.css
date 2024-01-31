@@ -1,0 +1,28 @@
+@font-face {
+    font-family: 'montserrat';
+    src: url('/fonts/Montserrat-SemiBold.tff') format('tff'),
+        url('/fonts/Montserrat-SemiBold.tff') format('tff'),;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'astro';
+    src: url('/fonts/astro.tff') format('tff');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family: 'RocketRinder';
+    src: url('/fonts/RocketRinder-yV5d.tff') format('tff');
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  @font-face {
+    font-family:'Doctor-Glitch';
+    src: url('/fonts/Doctor-Glitc.off') format('off');
+    font-weight: 400;
+    font-style: normal;
+}

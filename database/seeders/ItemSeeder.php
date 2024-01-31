@@ -20,7 +20,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Doubles your experience points for 15 minutes.',
                 'duration' => 15,
                 'price' => 20,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/doublexp15.png',
             ],
             [
                 'code' => '2EXP30',
@@ -28,7 +28,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Doubles your experience points for 30 minutes.',
                 'duration' => 30,
                 'price' => 35,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/doublexp30.png', // Replace with actual path
             ],
             [
                 'code' => 'HINT',
@@ -36,7 +36,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Provides a hint for a specific puzzle. Can be used once.',
                 'duration' => 1, // Assuming no duration for one-time use items
                 'price' => 300,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/hint.png', // Replace with actual path
             ],
             [
                 'code' => '2COIN15',
@@ -44,7 +44,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Doubles your earned coins for 15 minutes.',
                 'duration' => 15,
                 'price' => 20,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/doublecoin15.png', // Replace with actual path
             ],
             [
                 'code' => '2COIN30',
@@ -52,7 +52,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Doubles your earned coins for 30 minutes.',
                 'duration' => 30,
                 'price' => 35,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/doublecoin30.png', // Replace with actual path
             ],
             [
                 'code' => 'JB',
@@ -60,7 +60,7 @@ class ItemSeeder extends Seeder
                 'description'=>'allows you to escape from security bots or monsters once.',
                 'duration' => 1, // Assuming no duration for one-time use items
                 'price' => 20,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/jailbreakpass.png', // Replace with actual path
             ],
             [
                 'code' => 'COIN15Fifthtime',
@@ -68,7 +68,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Doubles your earned coins for 15 minutes on your fifth purchase only.',
                 'duration' => 15,
                 'price' => 75,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/fiftimecoin.png', // Replace with actual path
             ],
             [
                 'code' => 'KC',
@@ -76,7 +76,7 @@ class ItemSeeder extends Seeder
                 'description' => 'Unlocks 3a area permanently.',
                 'duration' => 9999999, // Assuming permanent duration for a Key Card
                 'price' => 50,
-                'image_path' => '', // Replace with actual path
+                'image_path' => '/items/keycardpass.png', // Replace with actual path
             ],
         ]);
     }
